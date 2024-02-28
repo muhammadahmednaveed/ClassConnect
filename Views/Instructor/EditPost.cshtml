@@ -1,0 +1,24 @@
+﻿@model ClassConnect.Models.Post
+@{
+    ViewData["Title"] = "EditPost";
+}
+
+<div class="card m-5 p-3">
+    <form method="post" asp-action="EditPost">
+        <h3>Edit the post</h3>
+        <input type="hidden" asp-for="PostID" />
+        <div class="w-50 form-group">
+            <input type="text" class="form-control " autocomplete="off" required asp-for="Title" placeholder="title" />
+        </div>
+        <div class="form-group">
+            <textarea class="form-control" autocomplete="off" asp-for="Body" required placeholder="what's up?"></textarea>
+
+        </div>
+
+        <div class="form-group">
+            <input type="submit" class="w-25 form-control btn-block btn-primary mb-2 float-right" autocomplete="off" value="Save Changes" />
+        </div>
+        <span class="text-success text-center">@TempData["updatedPost"]</span>
+    </form>
+</div>
+

@@ -1,0 +1,24 @@
+﻿@model ClassConnect.Models.Post_Comment_Votes
+@{
+    ViewData["Title"] = "EditComment";
+    Layout = "~/Views/Shared/PostsLayout.cshtml";
+}
+
+
+
+<div class="m-1 p-1 text-center">
+    <h2>Edit Comment</h2>
+    <form method="post" asp-action="EditComment">
+        <input type="hidden" asp-for="CommentID"/>
+        <input type="hidden" asp-for="PostID"/>
+        <div class="form-group">
+            <textarea asp-for="CommentBody" class="form-control" autocomplete="off" required placeholder="Write a comment"></textarea>
+        </div>
+        <div class="form-group">
+            <input type="submit" class="form-control btn-primary mb-2 float-right" autocomplete="off" style="width:10%" value="Comment" />
+        </div>
+        <span class="text-success text-center">@TempData["editedComment"]</span>
+    </form>
+</div>
+<br />
+

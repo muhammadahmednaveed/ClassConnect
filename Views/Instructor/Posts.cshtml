@@ -1,0 +1,53 @@
+﻿@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor
+@model ClassConnect.Models.Post_Comment_Votes
+@{
+    ViewData["Title"] = "Posts";
+    Layout = "~/Views/Shared/PostsLayout.cshtml";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="~/lib/jquery/dist/jquery.js"></script>
+
+@*instructors*@
+@{ 
+    try
+    {
+        var admin = HttpContextAccessor.HttpContext.Session.GetString("Admin");
+        bool adminRole = bool.Parse(admin);
+        if (adminRole == true)
+        {
+        <a class="btn-sm btn-primary btn-success m-5" asp-area="" asp-controller="Instructor" asp-action="SignUp">Add Instructor</a>
+        }
+    }
+    catch (ArgumentNullException)
+    {
+        Context.Response.Redirect("https://localhost:44385/Student/Posts");
+    }
+}
+
+<span class="text-success text-center">@TempData["successMessage"]</span>
+
+
+<div class="card m-5 p-3">
+    <form method="post" asp-action="Posts">
+        <div class="w-50 form-group">
+            <input type="text" class="form-control " autocomplete="off" required asp-for="PostTitle" placeholder="title" />
+        </div>
+        <div class="form-group">
+            <textarea class="form-control" autocomplete="off" asp-for="PostBody" required placeholder="what's up?"></textarea>
+
+        </div>
+
+        <div class="form-group">
+            <input type="submit" class="w-25 form-control btn-block btn-primary mb-2 float-right" autocomplete="off" value="Post" />
+        </div>
+
+    </form>
+</div>
+
+<partial name="_displayPosts" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="~/lib/jquery/dist/jquery.js"></script>
+

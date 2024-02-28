@@ -1,0 +1,143 @@
+﻿@model ClassConnect.Models.Post_Comment_Votes
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<div class="m-5">
+    <span class="text-success text-center">@TempData["InstructorAdded"]</span>
+    <span class="text-success text-center">@TempData["addedPost"]</span>
+    <span class="text-success text-center">@TempData["editedPost"]</span>
+    <span class="text-success text-center">@TempData["deletedPost"]</span>
+    <span class="text-success text-center">@TempData["addedComment"]</span>
+    <span class="text-success text-center">@TempData["editedComment"]</span>
+    <span class="text-success text-center">@TempData["deletedComment"]</span>
+</div>
+<h2 class="text-center">All Posts</h2>
+
+
+@foreach (var data in (IEnumerable<Post>)ViewData["Posts"])
+{
+    <div class="card m-5">
+        <div class="card-header">
+            <h5>@data.Title</h5>
+            <p>Posted by <span class="text-primary">@data.Author</span> on <span class="text-primary">@data.Date</span></p>
+        </div>
+        <div class="card-body">
+            <p>@data.Body</p>
+            <a asp-action="UpVote" asp-controller="Comment" asp-route-id="@data.PostID" class="mr-2 btn">
+                <i id="@(data.PostID)" class="fa-solid fa-thumbs-up thumbUp"></i>
+            </a>
+            <span class="mr-2">@data.Upvotes</span>
+            <a asp-action="DownVote" asp-controller="Comment" asp-route-id="@data.PostID" class="mr-2 btn">
+                <i id="@(data.PostID*-1)" class="fa-solid fa-thumbs-down thumbDown"></i>
+            </a>
+
+            @foreach (var vote in (List<Vote>)ViewData["Votes"])
+            {
+                if (vote.PostID == data.PostID && vote.Username == User.Identity.Name)
+                {
+                    if (vote.IsLike == true)
+                    {
+                        <script>
+                            $(document).ready(function () {
+                                $("#@(data.PostID)").addClass('clicked');
+                                console.log("yes");
+                            });
+                        </script>
+                    }
+                    else if (vote.IsDislike == true)
+                    {
+                        <script>
+                            $(document).ready(function () {
+                                $("#@(data.PostID*-1)").addClass('clicked');
+                                console.log("no");
+                            });
+
+                        </script>
+                    }
+                    else
+                    {
+                        <script>
+                            $(document).ready(function () {
+                                $(".thumbUp").removeClass('clicked');
+                                $(".thumbDown").removeClass('clicked');
+                                console.log("here");
+                            });
+                        </script>
+                    }
+                }
+
+            }
+
+            <span class="mr-2">@data.Downvotes</span>
+            @if (User.Identity.Name == @data.Author)
+            {
+                <span class="float-right">
+                    <a class="m-2 text-warning" asp-action="EditPost" asp-route-id="@data.PostID">Edit</a>
+                    <a class="m-2 text-danger" asp-action="DeletePost" asp-route-id="@data.PostID">Delete</a>
+                </span>
+            }
+        </div>
+        <div class="card-footer">
+            <h6>Comments</h6>
+
+            <div class="m-1 p-1">
+                <form method="post" asp-action="AddComment" asp-controller="Comment">
+                    <input type="hidden" asp-for="PostID" value="@data.PostID" />
+                    <div class="form-group float-left" style="width:80%">
+                        <textarea asp-for="CommentBody" rows="1" class="form-control" autocomplete="off" required placeholder="Write a comment"></textarea>
+                    </div>
+                    <div class="form-group float-right">
+                        <input type="submit" class="form-control btn-primary mb-2" autocomplete="off" value="Comment" />
+                    </div>
+                    @*<span class="text-success text-center">@TempData["addedComment"]</span>*@
+                </form><br /><br /><br />
+            </div>
+
+            @foreach (var Value in (Dictionary<int, List<Comment>>)ViewData["Comments"])
+            {
+                @if (Value.Key == data.PostID)
+                {
+                    @foreach (var comment in Value.Value)
+                    {
+                        <p>
+                            <span class="text-primary">@comment.Author</span> : <span>@comment.Body</span>
+                            @if (User.Identity.Name == @comment.Author)
+                            {
+                                <span class="float-right">
+                                    <a class="m-2 text-warning" asp-action="EditComment" asp-controller="Comment" asp-route-id="@comment.CommentID">Edit</a>
+                                    <a class="m-2 text-danger" asp-action="DeleteComment" asp-controller="Comment" asp-route-id="@comment.CommentID">Delete</a>
+                                </span>
+                            }
+                        </p>
+                    }
+                }
+
+            }
+        </div>
+    </div>
+}
+
+
+
+<style>
+    .clicked {
+        color: blue
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        $(".thumbUp").click(function () {
+            $(this).toggleClass('clicked');
+            let checkClass = $(this).parent().next().children().first();
+            if (checkClass.hasClass('clicked')) {
+                checkClass.removeClass('clicked')
+            }
+        });
+        $(".thumbDown").click(function () {
+            $(this).toggleClass('clicked');
+            let checkClass = $(this).parent().prev().children().first();
+            if (checkClass.hasClass('clicked')) {
+                checkClass.removeClass('clicked')
+            }
+        });
+    });
+</script>
